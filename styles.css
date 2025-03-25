@@ -275,3 +275,16 @@ footer {
     font-size: 1.5rem;
     cursor: pointer;
 }
+
+/* QR Code Styling for WalletConnect */
+.walletconnect-modal__base {
+    z-index: 1001 !important;
+}
+
+.walletconnect-modal__headerLogo {
+    display: none !important;
+}
+
+.walletconnect-qrcode__text {
+    color: var(--primary-text) !important;
+}
