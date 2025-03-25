@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tarif Finance - Waitlist</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="styles.css">
+  <!-- Critical Meta Tags for Web3 -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="description" content="Join Tarif Finance waitlist for exclusive access">
+</head>
+<body>
+  <!-- Header -->
+  <header class="main-header">
+    <div class="header-container">
+      <div class="logo">
+        <span class="logo-icon">TF</span>
+        <span class="logo-text">Tarif Finance</span>
+      </div>
+      <button id="headerConnectBtn" class="header-connect">Connect Wallet</button>
+      <button class="hamburger">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    
+    <div class="mobile-menu">
+      <button id="mobileConnectBtn" class="mobile-connect">Connect Wallet</button>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main>
+    <div class="container">
+      <div class="content">
+        <h1>Welcome to <span class="highlight">Tarif Finance</span></h1>
+        <p class="subtitle">Your Gateway to Decentralized Financial Freedom</p>
+        
+        <div class="main-content">
+          <p class="description">
+            Join our exclusive waitlist for early access
+          </p>
+          
+          <!-- Primary Connect Button -->
+          <button id="connectWalletBtn" class="connect-button">
+            <span id="buttonText">Connect Wallet</span>
+            <span id="buttonLoader" class="loader hidden"></span>
+          </button>
+          
+          <!-- Connection Success Section -->
+          <div id="postConnection" class="hidden">
+            <div class="success-message">
+              <p>🎉 You're on the waitlist!</p>
+              
+              <div class="wallet-info">
+                <p>Connected Wallet:</p>
+                <p id="walletAddressDisplay"></p>
+              </div>
+              
+              <div class="referral-section">
+                <p>Your referral link:</p>
+                <div class="referral-link" id="referralLink"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Essential Web3 Script -->
+  <script>
+    // Critical initialization check
+    window.addEventListener('load', function() {
+      if (typeof window.ethereum === 'undefined') {
+        console.warn('No Ethereum provider detected');
+      } else {
+        console.log('Ethereum provider detected:', window.ethereum);
+      }
+    });
+  </script>
+  
+  <!-- Main App Script -->
+  <script src="app.js"></script>
+</body>
+</html>
