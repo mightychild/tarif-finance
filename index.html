@@ -3,13 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tafif - Airdrop Waitlist</title>
+    <title>Tarif Finance - Airdrop Waitlist</title>
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
+    <!-- Wallet Selection Modal -->
+    <div class="modal" id="walletModal">
+        <div class="modal-content">
+            <h3>Connect Wallet</h3>
+            <div class="wallet-options">
+                <button class="wallet-option" id="metamaskBtn">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg" alt="MetaMask">
+                    MetaMask
+                </button>
+                <button class="wallet-option" id="walletConnectBtn">
+                    <img src="https://walletconnect.com/_next/static/media/logo_mark.84dd8525.svg" alt="WalletConnect">
+                    WalletConnect
+                </button>
+                <button class="wallet-option" id="coinbaseBtn">
+                    <img src="https://cdn.iconscout.com/icon/free/png-256/coinbase-3521427-2944871.png" alt="Coinbase">
+                    Coinbase Wallet
+                </button>
+            </div>
+            <button class="close-modal" id="closeModal">×</button>
+        </div>
+    </div>
+
     <header>
-        <h1>Welcome to Tafif</h1>
+        <h1>Welcome to Tarif Finance</h1>
         <p class="subtitle">Your Gateway to Decentralized Financial Freedom</p>
     </header>
 
@@ -44,10 +66,10 @@
 
         <div class="success-message" id="success-message" style="display: none;">
             <h2>Congratulations!</h2>
-            <p>You've successfully joined the Tafif waitlist.</p>
+            <p>You've successfully joined the Tarif Finance waitlist.</p>
             <p>Follow us on Twitter to stay updated:</p>
-            <a href="https://twitter.com/tafif" class="twitter-btn" target="_blank">
-                Follow @tafif
+            <a href="https://twitter.com/tariffinance" class="twitter-btn" target="_blank">
+                Follow @tariffinance
             </a>
             <div class="referral-section" id="referral-section" style="margin-top: 1.5rem;">
                 <p>Your unique referral code:</p>
@@ -58,11 +80,12 @@
     </main>
 
     <footer>
-        <p>&copy; 2025 Tafif. All rights reserved.</p>
+        <p>&copy; 2025 Tarif Finance. All rights reserved.</p>
     </footer>
 
-    <!-- Add Web3.js library -->
+    <!-- Add Web3 and WalletConnect libraries -->
     <script src="https://cdn.jsdelivr.net/npm/web3@1.8.0/dist/web3.min.js"></script>
-    <script src="app.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@walletconnect/web3-provider@1.7.8/dist/umd/index.min.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
