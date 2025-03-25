@@ -67,7 +67,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Form submission
+    // form submission handler
     waitlistForm.addEventListener('submit', function(e) {
         e.preventDefault();
         
@@ -76,16 +76,34 @@ document.addEventListener('DOMContentLoaded', function() {
             alert('Please enter a valid email address');
             return;
         }
-
+    
+        // Generate a referral code (8 characters, alphanumeric)
+        const referralCode = generateReferralCode(8);
+        
+        // Display the referral code
+        document.getElementById('referral-code').textContent = referralCode;
+        
         // In a real app, you would send this data to your server
         console.log('Form submitted:', {
             email: emailInput.value,
             referral: document.getElementById('referral').value,
-            walletAddress: walletAddressSpan.textContent
+            walletAddress: walletAddressSpan.textContent,
+            userReferralCode: referralCode
         });
-
+    
         // Show success message
         waitlistContainer.style.display = 'none';
         successMessage.style.display = 'block';
+        document.getElementById('referral-section').style.display = 'block';
     });
+    
+    // Function to generate referral code
+    function generateReferralCode(length) {
+        const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // Excluding confusing characters
+        let result = '';
+        for (let i = 0; i < length; i++) {
+            result += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+        return result;
+    }
 });
