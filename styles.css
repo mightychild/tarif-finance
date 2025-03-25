@@ -166,6 +166,38 @@ input:focus {
     background-color: #1991db;
 }
 
+/* Add these styles at the end of your CSS file */
+.referral-section {
+    background-color: var(--input-bg);
+    padding: 1rem;
+    border-radius: 0.5rem;
+    text-align: center;
+    margin-top: 1.5rem;
+}
+
+.referral-section p {
+    color: var(--secondary-text);
+    margin-bottom: 0.5rem;
+}
+
+.referral-code {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--accent-color);
+    background-color: rgba(59, 130, 246, 0.1);
+    padding: 0.5rem 1rem;
+    border-radius: 0.25rem;
+    display: inline-block;
+    margin: 0.5rem 0;
+    font-family: monospace;
+}
+
+.referral-note {
+    font-size: 0.875rem;
+    color: var(--secondary-text);
+    margin-top: 0.5rem;
+}
+
 footer {
     margin-top: auto;
     padding-top: 3rem;
