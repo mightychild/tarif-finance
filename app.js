@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', async function() {
     // DOM Elements
     const connectWalletBtn = document.getElementById('connectWalletBtn');
     const walletModal = document.getElementById('walletModal');
@@ -14,101 +14,137 @@ document.addEventListener('DOMContentLoaded', function() {
     const walletInfo = document.getElementById('walletInfo');
     const walletAddressSpan = document.getElementById('walletAddress');
 
-    // Wallet Connection Functions
-    async function connectMetaMask() {
-        try {
-            if (!window.ethereum) {
-                window.open('https://metamask.io/download.html', '_blank');
-                return;
-            }
-            
-            const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-            handleConnectedWallet(accounts[0], 'MetaMask');
-            
-            // Listen for account changes
-            window.ethereum.on('accountsChanged', (accounts) => {
-                if (accounts.length === 0) {
-                    // Wallet disconnected
-                    resetWalletConnection();
-                } else {
-                    // Account changed
-                    handleConnectedWallet(accounts[0], 'MetaMask');
-                }
-            });
-        } catch (error) {
-            console.error('MetaMask connection error:', error);
-            alert('Failed to connect MetaMask: ' + error.message);
-        }
-    }
+    // Wallet Connection State
+    let walletProvider = null;
 
-    async function connectWalletConnect() {
+    // Check if we're on mobile
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+    // Initialize WalletConnect
+    async function initWalletConnect() {
         try {
-            const provider = new WalletConnectProvider.default({
+            const WalletConnectProvider = window.WalletConnectProvider.default;
+            const provider = new WalletConnectProvider({
                 rpc: {
-                    1: "https://mainnet.infura.io/v3/534b7dbe207e43f59228b1cee99db90f",
+                    1: "https://cloudflare-eth.com", // Free public RPC
                     56: "https://bsc-dataseed.binance.org/",
-                    // Add other chains as needed
+                    137: "https://polygon-rpc.com/"
+                },
+                bridge: "https://bridge.walletconnect.org",
+                qrcodeModalOptions: {
+                    mobileLinks: [
+                        'metamask',
+                        'trust',
+                        'coinbase',
+                        'argent'
+                    ]
                 }
             });
             
             await provider.enable();
-            const web3 = new Web3(provider);
-            const accounts = await web3.eth.getAccounts();
-            handleConnectedWallet(accounts[0], 'WalletConnect');
-            
-            // Subscribe to events
-            provider.on("accountsChanged", (accounts) => {
-                if (accounts.length === 0) {
-                    resetWalletConnection();
-                } else {
-                    handleConnectedWallet(accounts[0], 'WalletConnect');
-                }
-            });
+            return provider;
         } catch (error) {
-            console.error('WalletConnect error:', error);
-            alert('Failed to connect via WalletConnect: ' + error.message);
+            console.error("WalletConnect Error:", error);
+            throw error;
         }
     }
 
+    // Connect MetaMask
+    async function connectMetaMask() {
+        try {
+            if (!window.ethereum) {
+                // If on mobile and no injected provider, try deep linking
+                if (isMobile) {
+                    window.location.href = "https://metamask.app.link/dapp/" + window.location.hostname;
+                    throw new Error("Redirecting to MetaMask...");
+                } else {
+                    window.open('https://metamask.io/download.html', '_blank');
+                    throw new Error("MetaMask not installed");
+                }
+            }
+            
+            const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+            return {
+                address: accounts[0],
+                provider: window.ethereum,
+                name: 'MetaMask'
+            };
+        } catch (error) {
+            console.error("MetaMask Error:", error);
+            throw error;
+        }
+    }
+
+    // Connect Coinbase Wallet
     async function connectCoinbase() {
         try {
-            if (window.ethereum && window.ethereum.isCoinbaseWallet) {
+            if (window.coinbaseWalletExtension) {
+                const accounts = await window.coinbaseWalletExtension.request({ method: 'eth_requestAccounts' });
+                return {
+                    address: accounts[0],
+                    provider: window.coinbaseWalletExtension,
+                    name: 'Coinbase'
+                };
+            } else if (window.ethereum?.isCoinbaseWallet) {
                 const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-                handleConnectedWallet(accounts[0], 'Coinbase');
-                
-                window.ethereum.on('accountsChanged', (accounts) => {
-                    if (accounts.length === 0) {
-                        resetWalletConnection();
-                    } else {
-                        handleConnectedWallet(accounts[0], 'Coinbase');
-                    }
-                });
+                return {
+                    address: accounts[0],
+                    provider: window.ethereum,
+                    name: 'Coinbase'
+                };
+            } else if (isMobile) {
+                window.location.href = "https://go.cb-w.com/dapp?cb_url=" + encodeURIComponent(window.location.href);
+                throw new Error("Redirecting to Coinbase Wallet...");
             } else {
                 window.open('https://www.coinbase.com/wallet', '_blank');
+                throw new Error("Coinbase Wallet not installed");
             }
         } catch (error) {
-            console.error('Coinbase connection error:', error);
-            alert('Failed to connect Coinbase Wallet: ' + error.message);
+            console.error("Coinbase Error:", error);
+            throw error;
         }
     }
 
-    function handleConnectedWallet(address, walletName) {
+    // Handle Successful Connection
+    function handleConnectedWallet(result) {
+        const { address, name } = result;
         const shortenedAddress = `${address.substring(0, 6)}...${address.substring(address.length - 4)}`;
-        walletAddressSpan.textContent = `${walletName}: ${shortenedAddress}`;
+        
+        walletAddressSpan.textContent = `${name}: ${shortenedAddress}`;
         walletInfo.style.display = 'block';
-        connectWalletBtn.textContent = 'Wallet Connected';
+        connectWalletBtn.textContent = 'Connected';
         connectWalletBtn.style.backgroundColor = '#10b981';
         submitBtn.disabled = false;
         submitBtn.classList.add('enabled');
         walletModal.style.display = 'none';
+        
+        // Store provider reference
+        walletProvider = result.provider;
+
+        // Add event listeners for account changes
+        if (name === 'MetaMask' || name === 'Coinbase') {
+            walletProvider.on('accountsChanged', (accounts) => {
+                if (accounts.length === 0) {
+                    resetWalletConnection();
+                } else {
+                    walletAddressSpan.textContent = `${name}: ${accounts[0].substring(0, 6)}...${accounts[0].substring(accounts[0].length - 4)}`;
+                }
+            });
+            
+            walletProvider.on('chainChanged', () => {
+                window.location.reload();
+            });
+        }
     }
 
+    // Reset connection
     function resetWalletConnection() {
         walletInfo.style.display = 'none';
         connectWalletBtn.textContent = 'Connect Wallet';
         connectWalletBtn.style.backgroundColor = '#3b82f6';
         submitBtn.disabled = true;
         submitBtn.classList.remove('enabled');
+        walletProvider = null;
     }
 
     // Event Listeners
@@ -120,9 +156,49 @@ document.addEventListener('DOMContentLoaded', function() {
         walletModal.style.display = 'none';
     });
 
-    metamaskBtn.addEventListener('click', connectMetaMask);
-    walletConnectBtn.addEventListener('click', connectWalletConnect);
-    coinbaseBtn.addEventListener('click', connectCoinbase);
+    metamaskBtn.addEventListener('click', async () => {
+        try {
+            const result = await connectMetaMask();
+            handleConnectedWallet(result);
+        } catch (error) {
+            alert(`MetaMask Error: ${error.message}`);
+        }
+    });
+
+    walletConnectBtn.addEventListener('click', async () => {
+        try {
+            const provider = await initWalletConnect();
+            const web3 = new Web3(provider);
+            const accounts = await web3.eth.getAccounts();
+            
+            handleConnectedWallet({
+                address: accounts[0],
+                provider: provider,
+                name: 'WalletConnect'
+            });
+            
+            // Handle WalletConnect events
+            provider.on("accountsChanged", (accounts) => {
+                if (accounts.length === 0) resetWalletConnection();
+            });
+            
+            provider.on("disconnect", () => {
+                resetWalletConnection();
+            });
+            
+        } catch (error) {
+            alert(`WalletConnect Error: ${error.message}`);
+        }
+    });
+
+    coinbaseBtn.addEventListener('click', async () => {
+        try {
+            const result = await connectCoinbase();
+            handleConnectedWallet(result);
+        } catch (error) {
+            alert(`Coinbase Error: ${error.message}`);
+        }
+    });
 
     // Close modal when clicking outside
     window.addEventListener('click', (e) => {
@@ -170,4 +246,26 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         return result;
     }
+
+    // Check if wallet is already connected
+    async function checkConnectedWallet() {
+        if (window.ethereum) {
+            try {
+                const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+                if (accounts.length > 0) {
+                    handleConnectedWallet({
+                        address: accounts[0],
+                        provider: window.ethereum,
+                        name: window.ethereum.isMetaMask ? 'MetaMask' : 
+                             window.ethereum.isCoinbaseWallet ? 'Coinbase' : 'Injected'
+                    });
+                }
+            } catch (error) {
+                console.error("Error checking connected wallet:", error);
+            }
+        }
+    }
+
+    // Initialize wallet connection check
+    checkConnectedWallet();
 });
