@@ -1,439 +1,177 @@
 :root {
-  --primary: #00ff88;
-  --secondary: #1e3c72;
-  --twitter-blue: #1da1f2;
-  --telegram-blue: #0088cc;
-  --discord-purple: #5865F2;
+    --primary-bg: #0f172a;
+    --primary-text: #ffffff;
+    --accent-color: #3b82f6;
+    --secondary-text: #94a3b8;
+    --card-bg: #1e293b;
+    --input-bg: #334155;
 }
 
-/* Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
+}
+
 body {
-  font-family: 'Inter', sans-serif;
-  background: linear-gradient(135deg, #1e3c72, #2a5298);
-  color: white;
-  margin: 0;
-  padding: 0;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
+    background-color: var(--primary-bg);
+    color: var(--primary-text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    line-height: 1.5;
 }
 
-/* Header Styles */
-.main-header {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  background: rgba(30, 60, 114, 0.9);
-  backdrop-filter: blur(10px);
-  z-index: 1000;
-  padding: 1rem 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+header {
+    text-align: center;
+    margin-bottom: 2rem;
 }
 
-.header-container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 2rem;
-}
-
-.logo {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-
-.logo-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-  background: var(--primary);
-  color: var(--secondary);
-  font-weight: 700;
-  border-radius: 8px;
-}
-
-.logo-text {
-  font-weight: 700;
-  font-size: 1.25rem;
-}
-
-.header-nav {
-  display: flex;
-  align-items: center;
-  gap: 2rem;
-}
-
-.nav-link {
-  color: rgba(255, 255, 255, 0.8);
-  text-decoration: none;
-  font-weight: 500;
-  transition: color 0.3s ease;
-  position: relative;
-}
-
-.nav-link:hover {
-  color: white;
-}
-
-.nav-link.active {
-  color: var(--primary);
-}
-
-.nav-link.active::after {
-  content: '';
-  position: absolute;
-  bottom: -5px;
-  left: 0;
-  width: 100%;
-  height: 2px;
-  background: var(--primary);
-}
-
-.social-links {
-  display: flex;
-  gap: 1rem;
-  margin: 0 1rem;
-}
-
-.social-links a {
-  color: rgba(255,255,255,0.7);
-  transition: color 0.3s ease;
-  font-size: 1.1rem;
-}
-
-.social-links a:hover {
-  color: var(--primary);
-}
-
-.header-connect {
-  background: rgba(0, 255, 136, 0.2);
-  color: var(--primary);
-  border: 1px solid var(--primary);
-  padding: 0.5rem 1.25rem;
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.header-connect:hover {
-  background: rgba(0, 255, 136, 0.3);
-}
-
-/* Mobile Menu */
-.hamburger {
-  display: none;
-  flex-direction: column;
-  justify-content: space-between;
-  width: 30px;
-  height: 21px;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  z-index: 1010;
-}
-
-.hamburger span {
-  display: block;
-  height: 3px;
-  width: 100%;
-  background: white;
-  transition: all 0.3s ease;
-}
-
-.mobile-menu {
-  position: fixed;
-  top: 0;
-  right: -100%;
-  width: 80%;
-  max-width: 300px;
-  height: 100vh;
-  background: var(--secondary);
-  z-index: 1005;
-  transition: right 0.3s ease;
-  padding: 6rem 2rem 2rem;
-}
-
-.mobile-menu.active {
-  right: 0;
-}
-
-.mobile-menu nav {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-.mobile-menu .nav-link {
-  color: white;
-  font-size: 1.2rem;
-  padding: 0.5rem 0;
-  border-bottom: 1px solid rgba(255,255,255,0.1);
-}
-
-.mobile-social {
-  display: flex;
-  gap: 1.5rem;
-  margin: 2rem 0;
-}
-
-.mobile-social a {
-  color: white;
-  font-size: 1.5rem;
-}
-
-.mobile-connect {
-  width: 100%;
-  padding: 1rem;
-  background: var(--primary);
-  color: black;
-  border: none;
-  border-radius: 8px;
-  font-weight: 600;
-}
-
-/* Main Content */
-main {
-  flex: 1;
-  margin-top: 80px;
-}
-
-.container {
-  width: 100%;
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 2rem;
-}
-
-.content {
-  text-align: center;
-}
-
-.header h1 {
-  font-size: 2.5rem;
-  margin-bottom: 0.5rem;
-}
-
-.highlight {
-  color: var(--primary);
+h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
 }
 
 .subtitle {
-  font-size: 1.2rem;
-  color: #ccc;
-  margin-bottom: 2rem;
+    font-size: 1.25rem;
+    color: var(--secondary-text);
+    margin-bottom: 1.5rem;
+    max-width: 600px;
 }
 
-.description {
-  font-size: 1rem;
-  line-height: 1.6;
-  color: #ddd;
-  margin-bottom: 2rem;
+.waitlist-container {
+    background-color: var(--card-bg);
+    border-radius: 1rem;
+    padding: 2rem;
+    width: 100%;
+    max-width: 500px;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    margin: 0 auto;
 }
 
-.connect-button {
-  background: var(--primary);
-  color: black;
-  border: none;
-  padding: 1rem 2rem;
-  font-size: 1.1rem;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: 600;
-  transition: all 0.3s ease;
-  margin: 1rem 0;
+/* Rest of your existing CSS remains the same */
+.form-description {
+    color: var(--secondary-text);
+    margin-bottom: 1.5rem;
 }
 
-.connect-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 255, 136, 0.3);
+.form-group {
+    margin-bottom: 1.5rem;
 }
 
-.hidden {
-  display: none !important;
+label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--secondary-text);
+    font-weight: 500;
 }
 
-/* Form Styles */
-.email-section {
-  margin: 2rem 0;
+input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background-color: var(--input-bg);
+    border: 1px solid var(--input-bg);
+    border-radius: 0.5rem;
+    color: var(--primary-text);
+    font-size: 1rem;
 }
 
-.email-section p {
-  margin-bottom: 0.5rem;
+input:focus {
+    outline: none;
+    border-color: var(--accent-color);
 }
 
-.email-section input {
-  padding: 0.8rem;
-  border-radius: 8px;
-  border: none;
-  margin-right: 0.5rem;
-  width: 250px;
+.wallet-btn {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background-color: var(--accent-color);
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    margin-bottom: 1rem;
+    transition: background-color 0.2s;
 }
 
-.email-section button {
-  padding: 0.8rem 1.5rem;
-  background: var(--secondary);
-  color: white;
-  border: none;
-  border-radius: 8px;
+.wallet-btn:hover {
+    background-color: #2563eb;
 }
 
-.twitter-button {
-  display: inline-block;
-  background: var(--twitter-blue);
-  color: white;
-  padding: 0.8rem 1.5rem;
-  border-radius: 8px;
-  text-decoration: none;
-  font-weight: 600;
-  margin: 1rem 0;
-  transition: all 0.3s ease;
+.submit-btn {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background-color: var(--input-bg);
+    color: var(--secondary-text);
+    border: none;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: not-allowed;
+    transition: all 0.2s;
 }
 
-.twitter-button:hover {
-  background: #1991db;
-  transform: translateY(-2px);
+.submit-btn.enabled {
+    background-color: var(--accent-color);
+    color: white;
+    cursor: pointer;
 }
 
-.referral-share {
-  background: rgba(0,255,136,0.1);
-  padding: 1.5rem;
-  border-radius: 12px;
-  margin-top: 2rem;
+.submit-btn.enabled:hover {
+    background-color: #2563eb;
 }
 
-.referral-link {
-  background: white;
-  color: var(--secondary);
-  padding: 0.8rem;
-  border-radius: 8px;
-  word-break: break-all;
-  margin: 1rem 0;
-  font-family: monospace;
+.success-message {
+    background-color: var(--card-bg);
+    border-radius: 1rem;
+    padding: 2rem;
+    max-width: 500px;
+    text-align: center;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    margin: 0 auto;
 }
 
-.referral-section input {
-  padding: 0.8rem;
-  width: 100%;
-  max-width: 300px;
-  border-radius: 8px;
-  border: 1px solid #ddd;
+.success-message h2 {
+    margin-bottom: 1rem;
+    color: var(--accent-color);
 }
 
-/* Footer Styles */
-.main-footer {
-  background: #0a1a3a;
-  color: white;
-  padding: 4rem 0 0;
-  margin-top: auto;
+.success-message p {
+    margin-bottom: 1.5rem;
+    color: var(--secondary-text);
 }
 
-.footer-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 2rem;
-  display: grid;
-  grid-template-columns: 1fr 2fr;
-  gap: 3rem;
+.twitter-btn {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    background-color: #1da1f2;
+    color: white;
+    border-radius: 0.5rem;
+    text-decoration: none;
+    font-weight: 600;
+    transition: background-color 0.2s;
 }
 
-.footer-brand .logo {
-  margin-bottom: 1.5rem;
+.twitter-btn:hover {
+    background-color: #1991db;
 }
 
-.footer-tagline {
-  color: rgba(255,255,255,0.7);
-  margin-bottom: 2rem;
-  line-height: 1.6;
-}
-
-.footer-social {
-  display: flex;
-  gap: 1.5rem;
-}
-
-.footer-social a {
-  color: rgba(255,255,255,0.7);
-  font-size: 1.25rem;
-  transition: color 0.3s ease;
-}
-
-.footer-social a:hover {
-  color: var(--primary);
-}
-
-.footer-links {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 2rem;
-}
-
-.link-group h3 {
-  color: white;
-  margin-bottom: 1.5rem;
-  font-size: 1.1rem;
-}
-
-.link-group a {
-  display: block;
-  color: rgba(255,255,255,0.7);
-  margin-bottom: 1rem;
-  text-decoration: none;
-  transition: color 0.3s ease;
-}
-
-.link-group a:hover {
-  color: var(--primary);
-}
-
-.footer-bottom {
-  border-top: 1px solid rgba(255,255,255,0.1);
-  margin-top: 4rem;
-  padding: 2rem;
-  text-align: center;
-}
-
-.footer-bottom p {
-  color: rgba(255,255,255,0.5);
-  font-size: 0.9rem;
-}
-
-/* Responsive Styles */
-@media (max-width: 992px) {
-  .header-nav {
-    display: none;
-  }
-  
-  .hamburger {
-    display: flex;
-  }
-  
-  .header-connect {
-    display: none;
-  }
-}
-
-@media (max-width: 768px) {
-  .footer-container {
-    grid-template-columns: 1fr;
-  }
-  
-  .footer-links {
-    grid-template-columns: 1fr;
-  }
-  
-  .container {
-    padding: 2rem 1rem;
-  }
-  
-  .header h1 {
-    font-size: 2rem;
-  }
+footer {
+    margin-top: auto;
+    padding-top: 3rem;
+    text-align: center;
+    color: var(--secondary-text);
+    font-size: 0.875rem;
+    padding-bottom: 1rem;
+    width: 100%;
 }
