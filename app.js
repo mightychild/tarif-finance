@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', function() {
         try {
             const provider = new WalletConnectProvider.default({
                 rpc: {
-                    1: "https://mainnet.infura.io/v3/YOUR_INFURA_PROJECT_ID",
+                    1: "https://mainnet.infura.io/v3/534b7dbe207e43f59228b1cee99db90f",
                     56: "https://bsc-dataseed.binance.org/",
                     // Add other chains as needed
                 }
