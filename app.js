@@ -1,73 +1,137 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const waitlistForm = document.getElementById('waitlistForm');
+    // DOM Elements
     const connectWalletBtn = document.getElementById('connectWalletBtn');
+    const walletModal = document.getElementById('walletModal');
+    const closeModal = document.getElementById('closeModal');
+    const metamaskBtn = document.getElementById('metamaskBtn');
+    const walletConnectBtn = document.getElementById('walletConnectBtn');
+    const coinbaseBtn = document.getElementById('coinbaseBtn');
+    const waitlistForm = document.getElementById('waitlistForm');
     const submitBtn = document.getElementById('submitBtn');
+    const emailInput = document.getElementById('email');
     const waitlistContainer = document.getElementById('waitlist-form');
     const successMessage = document.getElementById('success-message');
-    const emailInput = document.getElementById('email');
     const walletInfo = document.getElementById('walletInfo');
     const walletAddressSpan = document.getElementById('walletAddress');
 
-    // Check if Web3 is injected (MetaMask or similar)
-    if (window.ethereum) {
-        window.web3 = new Web3(window.ethereum);
-    } else {
-        // Alert users if no Web3 provider is found
-        connectWalletBtn.textContent = 'Install MetaMask';
-        connectWalletBtn.style.backgroundColor = '#ef4444';
-        connectWalletBtn.onclick = function() {
-            window.open('https://metamask.io/download.html', '_blank');
-        };
-        return;
+    // Wallet Connection Functions
+    async function connectMetaMask() {
+        try {
+            if (!window.ethereum) {
+                window.open('https://metamask.io/download.html', '_blank');
+                return;
+            }
+            
+            const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+            handleConnectedWallet(accounts[0], 'MetaMask');
+            
+            // Listen for account changes
+            window.ethereum.on('accountsChanged', (accounts) => {
+                if (accounts.length === 0) {
+                    // Wallet disconnected
+                    resetWalletConnection();
+                } else {
+                    // Account changed
+                    handleConnectedWallet(accounts[0], 'MetaMask');
+                }
+            });
+        } catch (error) {
+            console.error('MetaMask connection error:', error);
+            alert('Failed to connect MetaMask: ' + error.message);
+        }
     }
 
-    // Wallet connection handler
-    connectWalletBtn.addEventListener('click', async function() {
+    async function connectWalletConnect() {
         try {
-            // Request account access
-            const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-            const account = accounts[0];
+            const provider = new WalletConnectProvider.default({
+                rpc: {
+                    1: "https://mainnet.infura.io/v3/YOUR_INFURA_PROJECT_ID",
+                    56: "https://bsc-dataseed.binance.org/",
+                    // Add other chains as needed
+                }
+            });
             
-            // Shorten address for display
-            const shortenedAddress = `${account.substring(0, 6)}...${account.substring(account.length - 4)}`;
+            await provider.enable();
+            const web3 = new Web3(provider);
+            const accounts = await web3.eth.getAccounts();
+            handleConnectedWallet(accounts[0], 'WalletConnect');
             
-            // Update UI
-            connectWalletBtn.textContent = 'Wallet Connected';
-            connectWalletBtn.style.backgroundColor = '#10b981';
-            walletAddressSpan.textContent = shortenedAddress;
-            walletInfo.style.display = 'block';
-            submitBtn.disabled = false;
-            submitBtn.classList.add('enabled');
-            
-            // Optional: Request user to sign a message to verify ownership
-            await signMessage(account);
-            
+            // Subscribe to events
+            provider.on("accountsChanged", (accounts) => {
+                if (accounts.length === 0) {
+                    resetWalletConnection();
+                } else {
+                    handleConnectedWallet(accounts[0], 'WalletConnect');
+                }
+            });
         } catch (error) {
-            console.error('Error connecting wallet:', error);
-            connectWalletBtn.textContent = 'Connection Failed';
-            connectWalletBtn.style.backgroundColor = '#ef4444';
-            
-            // Reset button after 2 seconds
-            setTimeout(() => {
-                connectWalletBtn.textContent = 'Connect Wallet';
-                connectWalletBtn.style.backgroundColor = '#3b82f6';
-            }, 2000);
+            console.error('WalletConnect error:', error);
+            alert('Failed to connect via WalletConnect: ' + error.message);
+        }
+    }
+
+    async function connectCoinbase() {
+        try {
+            if (window.ethereum && window.ethereum.isCoinbaseWallet) {
+                const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                handleConnectedWallet(accounts[0], 'Coinbase');
+                
+                window.ethereum.on('accountsChanged', (accounts) => {
+                    if (accounts.length === 0) {
+                        resetWalletConnection();
+                    } else {
+                        handleConnectedWallet(accounts[0], 'Coinbase');
+                    }
+                });
+            } else {
+                window.open('https://www.coinbase.com/wallet', '_blank');
+            }
+        } catch (error) {
+            console.error('Coinbase connection error:', error);
+            alert('Failed to connect Coinbase Wallet: ' + error.message);
+        }
+    }
+
+    function handleConnectedWallet(address, walletName) {
+        const shortenedAddress = `${address.substring(0, 6)}...${address.substring(address.length - 4)}`;
+        walletAddressSpan.textContent = `${walletName}: ${shortenedAddress}`;
+        walletInfo.style.display = 'block';
+        connectWalletBtn.textContent = 'Wallet Connected';
+        connectWalletBtn.style.backgroundColor = '#10b981';
+        submitBtn.disabled = false;
+        submitBtn.classList.add('enabled');
+        walletModal.style.display = 'none';
+    }
+
+    function resetWalletConnection() {
+        walletInfo.style.display = 'none';
+        connectWalletBtn.textContent = 'Connect Wallet';
+        connectWalletBtn.style.backgroundColor = '#3b82f6';
+        submitBtn.disabled = true;
+        submitBtn.classList.remove('enabled');
+    }
+
+    // Event Listeners
+    connectWalletBtn.addEventListener('click', () => {
+        walletModal.style.display = 'flex';
+    });
+
+    closeModal.addEventListener('click', () => {
+        walletModal.style.display = 'none';
+    });
+
+    metamaskBtn.addEventListener('click', connectMetaMask);
+    walletConnectBtn.addEventListener('click', connectWalletConnect);
+    coinbaseBtn.addEventListener('click', connectCoinbase);
+
+    // Close modal when clicking outside
+    window.addEventListener('click', (e) => {
+        if (e.target === walletModal) {
+            walletModal.style.display = 'none';
         }
     });
 
-    // Function to sign a message (optional verification)
-    async function signMessage(account) {
-        try {
-            const message = "Please sign this message to verify your wallet ownership for Tarif Finance airdrop.";
-            const signature = await web3.eth.personal.sign(message, account, '');
-            console.log('Signature:', signature);
-            // In a real app, you would send this signature to your backend for verification
-        } catch (error) {
-            console.error('Error signing message:', error);
-        }
-    }
-
-    // form submission handler
+    // Form submission
     waitlistForm.addEventListener('submit', function(e) {
         e.preventDefault();
         
@@ -76,7 +140,7 @@ document.addEventListener('DOMContentLoaded', function() {
             alert('Please enter a valid email address');
             return;
         }
-    
+
         // Generate a referral code (8 characters, alphanumeric)
         const referralCode = generateReferralCode(8);
         
@@ -90,13 +154,13 @@ document.addEventListener('DOMContentLoaded', function() {
             walletAddress: walletAddressSpan.textContent,
             userReferralCode: referralCode
         });
-    
+
         // Show success message
         waitlistContainer.style.display = 'none';
         successMessage.style.display = 'block';
         document.getElementById('referral-section').style.display = 'block';
     });
-    
+
     // Function to generate referral code
     function generateReferralCode(length) {
         const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // Excluding confusing characters
