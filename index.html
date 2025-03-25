@@ -1,152 +1,63 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tarif Finance - Waitlist</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link rel="stylesheet" href="styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tarif Finance - Airdrop Waitlist</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-  <!-- Header -->
-  <header class="main-header">
-    <div class="header-container">
-      <div class="logo">
-        <span class="logo-icon">TF</span>
-        <span class="logo-text">Tarif Finance</span>
-      </div>
-      
-      <nav class="header-nav">
-        <a href="#about" class="nav-link">About</a>
-        <a href="#tokenomics" class="nav-link">Tokenomics</a>
-        <a href="#roadmap" class="nav-link">Roadmap</a>
-        <div class="social-links">
-          <a href="https://x.com/I_BIlyasu/" target="_blank"><i class="fab fa-twitter"></i></a>
-          <a href="#" target="_blank"><i class="fab fa-telegram"></i></a>
-          <a href="#" target="_blank"><i class="fab fa-discord"></i></a>
-        </div>
-        <button class="header-connect">Connect Wallet</button>
-      </nav>
-      
-      <button class="hamburger">
-        <span></span>
-        <span></span>
-        <span></span>
-      </button>
-    </div>
-    
-    <div class="mobile-menu">
-      <nav>
-        <a href="#about" class="nav-link">About</a>
-        <a href="#tokenomics" class="nav-link">Tokenomics</a>
-        <a href="#roadmap" class="nav-link">Roadmap</a>
-        <div class="mobile-social">
-          <a href="https://x.com/I_BIlyasu/" target="_blank"><i class="fab fa-twitter"></i></a>
-          <a href="#" target="_blank"><i class="fab fa-telegram"></i></a>
-          <a href="#" target="_blank"><i class="fab fa-discord"></i></a>
-        </div>
-        <button class="mobile-connect">Connect Wallet</button>
-      </nav>
-    </div>
-  </header>
+    <header>
+        <h1>Welcome to Tarif Finance</h1>
+        <p class="subtitle">Your Gateway to Decentralized Financial Freedom</p>
+    </header>
 
-  <!-- Main Content -->
-  <main>
-    <div class="container">
-      <div class="content">
-        <div class="header">
-          <h1>Welcome to <span class="highlight">Tarif Finance</span></h1>
-          <p class="subtitle">Your Gateway to Decentralized Financial Freedom</p>
-        </div>
-        
-        <div class="main-content">
-          <p class="description">
-            Join our exclusive waitlist today and be the first to access our upcoming <strong>airdrop</strong>! 
-            Earn bonus rewards when you refer friends.
-          </p>
-          
-          <div class="referral-section">
-            <input type="text" id="referralCode" placeholder="Referral code (optional)">
-          </div>
-          
-          <button id="connectWalletBtn" class="connect-button">Connect Wallet</button>
-          
-          <div id="postConnection" class="hidden">
-            <div class="email-section">
-              <p>Get email updates (optional):</p>
-              <form id="emailForm" action="https://api.web3forms.com/submit" method="POST">
-                <input type="hidden" name="access_key" value="YOUR_WEB3FORMS_KEY">
-                <input type="hidden" name="wallet" id="formWallet">
-                <input type="email" name="email" placeholder="your@email.com">
-                <button type="submit">Notify Me</button>
-              </form>
-            </div>
+    <main>
+        <div class="waitlist-container" id="waitlist-form">
+            <p class="form-description">Join our exclusive waitlist today and be the first to access our upcoming airdrop! Earn bonus rewards when you refer friends.</p>
             
-            <div id="congratsMessage">
-              <p class="congrats-text">🎉 You're on the waitlist!</p>
-              <p class="follow-text">
-                Follow us: 
-                <a href="https://x.com/I_BIlyasu/" target="_blank" class="twitter-button">Follow @TarifFinance</a>
-              </p>
-              <div class="referral-share">
-                <p>Your referral link:</p>
-                <div class="referral-link" id="referralLink">Loading...</div>
-              </div>
-            </div>
-          </div>
+            <form id="waitlistForm">
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" name="email" required placeholder="Enter your email">
+                </div>
+                
+                <div class="form-group">
+                    <label for="referral">Referral code (optional)</label>
+                    <input type="text" id="referral" name="referral" placeholder="Enter referral code">
+                </div>
+                
+                <button type="button" id="connectWalletBtn" class="wallet-btn">
+                    Connect Wallet
+                </button>
+                
+                <div id="walletInfo" style="display: none; margin-bottom: 1rem;">
+                    <p>Connected: <span id="walletAddress"></span></p>
+                </div>
+                
+                <button type="submit" class="submit-btn" disabled id="submitBtn">
+                    Join Waitlist
+                </button>
+            </form>
         </div>
-      </div>
-    </div>
-  </main>
 
-  <!-- Footer -->
-  <footer class="main-footer">
-    <div class="footer-container">
-      <div class="footer-brand">
-        <div class="logo">
-          <span class="logo-icon">TF</span>
-          <span class="logo-text">Tarif Finance</span>
+        <div class="success-message" id="success-message" style="display: none;">
+            <h2>Congratulations!</h2>
+            <p>You've successfully joined the Tarif Finance waitlist.</p>
+            <p>Follow us on Twitter to stay updated:</p>
+            <a href="https://twitter.com/tariffinance" class="twitter-btn" target="_blank">
+                Follow @tariffinance
+            </a>
         </div>
-        <p class="footer-tagline">Decentralizing financial futures</p>
-        <div class="footer-social">
-          <a href="https://x.com/I_BIlyasu/" target="_blank"><i class="fab fa-twitter"></i></a>
-          <a href="#" target="_blank"><i class="fab fa-telegram"></i></a>
-          <a href="#" target="_blank"><i class="fab fa-discord"></i></a>
-        </div>
-      </div>
-      
-      <div class="footer-links">
-        <div class="link-group">
-          <h3>Product</h3>
-          <a href="#about">About</a>
-          <a href="#tokenomics">Tokenomics</a>
-          <a href="#roadmap">Roadmap</a>
-          <a href="#">Waitlist</a>
-        </div>
-        
-        <div class="link-group">
-          <h3>Resources</h3>
-          <a href="#">Whitepaper</a>
-          <a href="#">Docs</a>
-          <a href="#">Blog</a>
-          <a href="#">FAQ</a>
-        </div>
-        
-        <div class="link-group">
-          <h3>Legal</h3>
-          <a href="#">Privacy Policy</a>
-          <a href="#">Terms</a>
-          <a href="#">Cookie Policy</a>
-        </div>
-      </div>
-    </div>
-    
-    <div class="footer-bottom">
-      <p>© 2025 Tarif Finance. All rights reserved.</p>
-    </div>
-  </footer>
+    </main>
 
-  <script src="app.js" type="module"></script>
+    <footer>
+        <p>&copy; 2025 Tarif Finance. All rights reserved.</p>
+    </footer>
+
+    <!-- Add Web3.js library -->
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.8.0/dist/web3.min.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
