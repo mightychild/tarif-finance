@@ -16,51 +16,75 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     // Wallet Connection State
     let walletProvider = null;
-
-    // Check if we're on mobile
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+    // Error display function
+    const showError = (message, elementId = null) => {
+        document.querySelectorAll('.error-message').forEach(el => el.remove());
+        
+        const errorEl = document.createElement('div');
+        errorEl.className = 'error-message';
+        errorEl.setAttribute('role', 'alert');
+        errorEl.innerHTML = `<span aria-hidden="true">!</span> ${message}`;
+        
+        if (elementId) {
+            const target = document.getElementById(elementId);
+            target.parentNode.insertBefore(errorEl, target.nextSibling);
+            target.setAttribute('aria-invalid', 'true');
+            target.focus();
+        } else {
+            waitlistForm.prepend(errorEl);
+        }
+    };
+
+    // Email validation
+    const validateEmail = (email) => {
+        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return re.test(email);
+    };
 
     // Initialize WalletConnect
     async function initWalletConnect() {
         try {
+            walletConnectBtn.setAttribute('aria-busy', 'true');
+            connectWalletBtn.classList.add('connecting');
+            
             const WalletConnectProvider = window.WalletConnectProvider.default;
             const provider = new WalletConnectProvider({
                 rpc: {
-                    1: "https://cloudflare-eth.com", // Free public RPC
+                    1: "https://cloudflare-eth.com",
                     56: "https://bsc-dataseed.binance.org/",
                     137: "https://polygon-rpc.com/"
                 },
                 bridge: "https://bridge.walletconnect.org",
                 qrcodeModalOptions: {
-                    mobileLinks: [
-                        'metamask',
-                        'trust',
-                        'coinbase',
-                        'argent'
-                    ]
+                    mobileLinks: ['metamask', 'trust', 'coinbase', 'argent']
                 }
             });
             
             await provider.enable();
             return provider;
         } catch (error) {
-            console.error("WalletConnect Error:", error);
+            showError(`WalletConnect Error: ${error.message}`);
             throw error;
+        } finally {
+            walletConnectBtn.removeAttribute('aria-busy');
+            connectWalletBtn.classList.remove('connecting');
         }
     }
 
     // Connect MetaMask
     async function connectMetaMask() {
         try {
+            metamaskBtn.setAttribute('aria-busy', 'true');
+            connectWalletBtn.classList.add('connecting');
+            
             if (!window.ethereum) {
-                // If on mobile and no injected provider, try deep linking
                 if (isMobile) {
                     window.location.href = "https://metamask.app.link/dapp/" + window.location.hostname;
                     throw new Error("Redirecting to MetaMask...");
-                } else {
-                    window.open('https://metamask.io/download.html', '_blank');
-                    throw new Error("MetaMask not installed");
                 }
+                throw new Error("MetaMask not installed");
             }
             
             const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
@@ -70,14 +94,20 @@ document.addEventListener('DOMContentLoaded', async function() {
                 name: 'MetaMask'
             };
         } catch (error) {
-            console.error("MetaMask Error:", error);
+            showError(`MetaMask Error: ${error.message}`);
             throw error;
+        } finally {
+            metamaskBtn.removeAttribute('aria-busy');
+            connectWalletBtn.classList.remove('connecting');
         }
     }
 
     // Connect Coinbase Wallet
     async function connectCoinbase() {
         try {
+            coinbaseBtn.setAttribute('aria-busy', 'true');
+            connectWalletBtn.classList.add('connecting');
+            
             if (window.coinbaseWalletExtension) {
                 const accounts = await window.coinbaseWalletExtension.request({ method: 'eth_requestAccounts' });
                 return {
@@ -100,8 +130,11 @@ document.addEventListener('DOMContentLoaded', async function() {
                 throw new Error("Coinbase Wallet not installed");
             }
         } catch (error) {
-            console.error("Coinbase Error:", error);
+            showError(`Coinbase Error: ${error.message}`);
             throw error;
+        } finally {
+            coinbaseBtn.removeAttribute('aria-busy');
+            connectWalletBtn.classList.remove('connecting');
         }
     }
 
@@ -118,10 +151,8 @@ document.addEventListener('DOMContentLoaded', async function() {
         submitBtn.classList.add('enabled');
         walletModal.style.display = 'none';
         
-        // Store provider reference
         walletProvider = result.provider;
 
-        // Add event listeners for account changes
         if (name === 'MetaMask' || name === 'Coinbase') {
             walletProvider.on('accountsChanged', (accounts) => {
                 if (accounts.length === 0) {
@@ -161,7 +192,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             const result = await connectMetaMask();
             handleConnectedWallet(result);
         } catch (error) {
-            alert(`MetaMask Error: ${error.message}`);
+            console.error("MetaMask connection failed:", error);
         }
     });
 
@@ -177,7 +208,6 @@ document.addEventListener('DOMContentLoaded', async function() {
                 name: 'WalletConnect'
             });
             
-            // Handle WalletConnect events
             provider.on("accountsChanged", (accounts) => {
                 if (accounts.length === 0) resetWalletConnection();
             });
@@ -187,7 +217,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             });
             
         } catch (error) {
-            alert(`WalletConnect Error: ${error.message}`);
+            console.error("WalletConnect connection failed:", error);
         }
     });
 
@@ -196,11 +226,10 @@ document.addEventListener('DOMContentLoaded', async function() {
             const result = await connectCoinbase();
             handleConnectedWallet(result);
         } catch (error) {
-            alert(`Coinbase Error: ${error.message}`);
+            console.error("Coinbase connection failed:", error);
         }
     });
 
-    // Close modal when clicking outside
     window.addEventListener('click', (e) => {
         if (e.target === walletModal) {
             walletModal.style.display = 'none';
@@ -211,35 +240,44 @@ document.addEventListener('DOMContentLoaded', async function() {
     waitlistForm.addEventListener('submit', function(e) {
         e.preventDefault();
         
-        // Validate email
-        if (!emailInput.value || !emailInput.validity.valid) {
-            alert('Please enter a valid email address');
+        document.querySelectorAll('.error-message').forEach(el => el.remove());
+        document.querySelectorAll('[aria-invalid]').forEach(el => el.removeAttribute('aria-invalid'));
+        
+        if (!emailInput.value) {
+            showError('Email address is required', 'email');
             return;
         }
-
-        // Generate a referral code (8 characters, alphanumeric)
-        const referralCode = generateReferralCode(8);
         
-        // Display the referral code
-        document.getElementById('referral-code').textContent = referralCode;
+        if (!validateEmail(emailInput.value)) {
+            showError('Please enter a valid email address', 'email');
+            return;
+        }
         
-        // In a real app, you would send this data to your server
-        console.log('Form submitted:', {
-            email: emailInput.value,
-            referral: document.getElementById('referral').value,
-            walletAddress: walletAddressSpan.textContent,
-            userReferralCode: referralCode
-        });
+        submitBtn.innerHTML = '<div class="spinner"></div>';
+        submitBtn.disabled = true;
+        
+        setTimeout(() => {
+            const referralCode = generateReferralCode(8);
+            document.getElementById('referral-code').textContent = referralCode;
+            
+            console.log('Form submitted:', {
+                email: emailInput.value,
+                referral: document.getElementById('referral').value,
+                walletAddress: walletAddressSpan.textContent,
+                userReferralCode: referralCode
+            });
 
-        // Show success message
-        waitlistContainer.style.display = 'none';
-        successMessage.style.display = 'block';
-        document.getElementById('referral-section').style.display = 'block';
+            waitlistContainer.style.display = 'none';
+            successMessage.style.display = 'block';
+            document.getElementById('referral-section').style.display = 'block';
+            
+            submitBtn.innerHTML = 'Join Waitlist';
+            submitBtn.disabled = false;
+        }, 1500);
     });
 
-    // Function to generate referral code
     function generateReferralCode(length) {
-        const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // Excluding confusing characters
+        const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
         let result = '';
         for (let i = 0; i < length; i++) {
             result += chars.charAt(Math.floor(Math.random() * chars.length));
@@ -247,7 +285,6 @@ document.addEventListener('DOMContentLoaded', async function() {
         return result;
     }
 
-    // Check if wallet is already connected
     async function checkConnectedWallet() {
         if (window.ethereum) {
             try {
@@ -266,6 +303,5 @@ document.addEventListener('DOMContentLoaded', async function() {
         }
     }
 
-    // Initialize wallet connection check
     checkConnectedWallet();
 });

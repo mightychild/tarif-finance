@@ -8,27 +8,12 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <!-- Wallet Selection Modal -->
-    <div class="modal" id="walletModal">
-        <div class="modal-content">
-            <h3>Connect Wallet</h3>
-            <div class="wallet-options">
-                <button class="wallet-option" id="metamaskBtn">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg" alt="MetaMask">
-                    MetaMask
-                </button>
-                <button class="wallet-option" id="walletConnectBtn">
-                    <img src="https://walletconnect.com/_next/static/media/logo_mark.84dd8525.svg" alt="WalletConnect">
-                    WalletConnect
-                </button>
-                <button class="wallet-option" id="coinbaseBtn">
-                    <img src="https://cdn.iconscout.com/icon/free/png-256/coinbase-3521427-2944871.png" alt="Coinbase">
-                    Coinbase Wallet
-                </button>
-            </div>
-            <button class="close-modal" id="closeModal">×</button>
+    <nav class="navbar">
+        <div class="container">
+            <h1 class="logo">Tarif Finance</h1>
+            <a href="home.html" class="nav-btn">Back to Home</a>
         </div>
-    </div>
+    </nav>
 
     <header>
         <h1>Welcome to Tarif Finance</h1>
@@ -39,18 +24,25 @@
         <div class="waitlist-container" id="waitlist-form">
             <p class="form-description">Join our exclusive waitlist today and be the first to access our upcoming airdrop! Earn bonus rewards when you refer friends.</p>
             
-            <form id="waitlistForm">
+            <form id="waitlistForm" aria-label="Waitlist registration form">
                 <div class="form-group">
                     <label for="email">Email Address</label>
-                    <input type="email" id="email" name="email" required placeholder="Enter your email">
+                    <input type="email" id="email" name="email" required 
+                           placeholder="Enter your email"
+                           aria-required="true"
+                           aria-describedby="emailHelp">
+                    <small id="emailHelp" class="sr-only">We'll never share your email with anyone else.</small>
                 </div>
                 
                 <div class="form-group">
                     <label for="referral">Referral code (optional)</label>
-                    <input type="text" id="referral" name="referral" placeholder="Enter referral code">
+                    <input type="text" id="referral" name="referral" 
+                           placeholder="Enter referral code"
+                           aria-describedby="referralHelp">
+                    <small id="referralHelp" class="sr-only">If you have a referral code from a friend, enter it here.</small>
                 </div>
                 
-                <button type="button" id="connectWalletBtn" class="wallet-btn">
+                <button type="button" id="connectWalletBtn" class="wallet-btn" aria-live="polite">
                     Connect Wallet
                 </button>
                 
@@ -58,7 +50,7 @@
                     <p>Connected: <span id="walletAddress"></span></p>
                 </div>
                 
-                <button type="submit" class="submit-btn" disabled id="submitBtn">
+                <button type="submit" class="submit-btn" disabled id="submitBtn" aria-live="polite">
                     Join Waitlist
                 </button>
             </form>
@@ -68,22 +60,50 @@
             <h2>Congratulations!</h2>
             <p>You've successfully joined the Tarif Finance waitlist.</p>
             <p>Follow us on Twitter to stay updated:</p>
-            <a href="https://twitter.com/tariffinance" class="twitter-btn" target="_blank">
+            <a href="https://twitter.com/tariffinance" class="twitter-btn" target="_blank" rel="noopener noreferrer">
                 Follow @tariffinance
             </a>
             <div class="referral-section" id="referral-section" style="margin-top: 1.5rem;">
                 <p>Your unique referral code:</p>
-                <div class="referral-code" id="referral-code"></div>
+                <div class="referral-code" id="referral-code" aria-live="polite"></div>
                 <p class="referral-note">Share this code with friends to earn bonus rewards!</p>
             </div>
         </div>
     </main>
 
     <footer>
-        <p>&copy; 2025 Tarif Finance. All rights reserved.</p>
+        <div class="footer-content">
+            <div class="social-links">
+                <a href="https://twitter.com/tariffinance" target="_blank" rel="noopener noreferrer">Twitter</a>
+                <a href="https://t.me/tariffinance" target="_blank" rel="noopener noreferrer">Telegram</a>
+                <a href="https://github.com/tariffinance" target="_blank" rel="noopener noreferrer">GitHub</a>
+            </div>
+            <p>&copy; 2025 Tarif Finance. All rights reserved.</p>
+        </div>
     </footer>
 
-    <!-- Add Web3 and WalletConnect libraries -->
+    <!-- Wallet Selection Modal -->
+    <div class="modal" id="walletModal" role="dialog" aria-labelledby="walletModalTitle">
+        <div class="modal-content">
+            <h3 id="walletModalTitle">Connect Wallet</h3>
+            <div class="wallet-options">
+                <button class="wallet-option" id="metamaskBtn" aria-label="Connect with MetaMask">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg" alt="MetaMask">
+                    MetaMask
+                </button>
+                <button class="wallet-option" id="walletConnectBtn" aria-label="Connect with WalletConnect">
+                    <img src="https://walletconnect.com/_next/static/media/logo_mark.84dd8525.svg" alt="WalletConnect">
+                    WalletConnect
+                </button>
+                <button class="wallet-option" id="coinbaseBtn" aria-label="Connect with Coinbase Wallet">
+                    <img src="https://cdn.iconscout.com/icon/free/png-256/coinbase-3521427-2944871.png" alt="Coinbase">
+                    Coinbase Wallet
+                </button>
+            </div>
+            <button class="close-modal" id="closeModal" aria-label="Close wallet connection dialog">×</button>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/web3@1.8.0/dist/web3.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@walletconnect/web3-provider@1.7.8/dist/umd/index.min.js"></script>
     <script src="app.js"></script>
