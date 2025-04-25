@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     const walletInfo = document.getElementById('walletInfo');
     const walletAddressSpan = document.getElementById('walletAddress');
 
-    // Wallet Connection State
+    // Wallet Connection Sta
     let walletProvider = null;
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
