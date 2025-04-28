@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', async function() {
-    // DOM 
+    // DOM Elements
     const connectWalletBtn = document.getElementById('connectWalletBtn');
     const walletModal = document.getElementById('walletModal');
     const closeModal = document.getElementById('closeModal');
